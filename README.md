@@ -13,3 +13,15 @@
 
 # The MIT License (MIT)
 看根目录license文件
+
+### ZXC.prototype.getId(id)
+对`document.getElementById()`的封装
+
+### ZXC.prototype.getTagName(tag,[DOMNode])
+封装`document.getElementsByTagName()`，可以传入父节点缩小遍历范围
+
+```javascript
+var a = new ZXC(); //创建对象
+console.log(a.getTagName('p',a.getId('header')));
+```
+### ZXC.prototype.getClass()
