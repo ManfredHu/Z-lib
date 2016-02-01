@@ -1,7 +1,6 @@
 ﻿/**
  * DOM加载完毕的监视函数
- * @param  {[funtion]} f [DOM加载完毕要执行的函数]
- * @return {[type]}   [description]
+ * @param  {funtion} f [DOM加载完毕要执行的函数]
  */
 function domReady(f) {
     // domReady.done 标示页面是否加载完成
@@ -44,7 +43,12 @@ function domReady(f) {
     }
 }
 
-//跨浏览器添加事件绑定，与EventUtil的区别是支持多事件顺序绑定
+/**
+ * 跨浏览器添加事件绑定，舍弃了IE的attachEvent事件（有bug）
+ * @param {DOMNode}   obj  [要绑定的事件对象]
+ * @param {string}    type [绑定的事件，如click]
+ * @param {Function}  fn   [回调函数]
+ */
 function addEvent(obj, type, fn) {
     if (obj.addEventListener) {
         //DOM2级方法添加事件，false代表在冒泡阶段捕获事件
@@ -54,13 +58,9 @@ function addEvent(obj, type, fn) {
         if (!obj.events) {
             obj.events = {};
         }
-        //第一次执行时执行
         if (!obj.events[type]) {
             //创建一个存放事件处理函数的数组
             obj.events[type] = [];
-            //把第一次的事件处理函数先储存到第一个位置上
-            if (obj['on' + type]) 
-            	obj.events[type][0] = fn;
         } else {
             //同一个注册函数进行屏蔽，不添加到计数器中
             if (addEvent.equal(obj.events[type], fn)) {
@@ -69,13 +69,13 @@ function addEvent(obj, type, fn) {
         }
         //从第二次开始我们用事件计数器来存储
         obj.events[type][addEvent.ID++] = fn;
-        //执行事件处理函数
+        //执行事件处理函数队列
         obj['on' + type] = addEvent.exec;
     }
 }
 
-//为每个事件分配一个计数器
-addEvent.ID = 1;
+//为每个事件类型分配一个计数器
+addEvent.ID = 0;
 
 //执行事件处理函数
 addEvent.exec = function(event) {
@@ -83,21 +83,27 @@ addEvent.exec = function(event) {
     //将IE的window.event特有属性封装成类似W3C的模样
     //在第一次添加事件处理的时候重写全部event对象的方法并使之符合标准模式
     var e = event || addEvent.fixEvent(window.event);
+    //拿到对象类别事件的函数队列
     var es = this.events[e.type];
+    //顺序执行
     for (var i in es) {
         es[i].call(this, e);
     }
 };
 
-//同一个注册函数进行屏蔽，默认只能添加一样的函数一次
+//同一个注册函数进行屏蔽
+//一个函数绑定同个对象的同个事件默认会被忽略
 addEvent.equal = function(es, fn) {
     for (var i in es) {
-        if (es[i] == fn) return true;
+        if (es[i] === fn)
+            return true;
     }
     return false;
-}
+};
 
-//把IE常用的Event对象配对到W3C中去
+//模拟W3C的Event对象，修复IE的Event对象
+//已修复preventDefault/stopPropagation/target（常用）
+//滚轮或者剪贴板等需要自行添加
 addEvent.fixEvent = function(event) {
     event.preventDefault = addEvent.fixEvent.preventDefault;
     event.stopPropagation = addEvent.fixEvent.stopPropagation;
@@ -105,24 +111,29 @@ addEvent.fixEvent = function(event) {
     return event;
 };
 
-//IE阻止默认行为
+//IE阻止默认行为fix
 addEvent.fixEvent.preventDefault = function() {
     this.returnValue = false;
 };
 
-//IE取消冒泡
+//IE取消冒泡fix
 addEvent.fixEvent.stopPropagation = function() {
     this.cancelBubble = true;
 };
-//---------------------------------------------------------------------------------
-//跨浏览器删除事件
+
+/**
+ * 跨浏览器删除事件
+ * @param  {[DOMNode]}   obj  [要删除事件的对象]
+ * @param  {[string]}    type [事件类型]
+ * @param  {Function}    fn   [回调函数]
+ */
 function removeEvent(obj, type, fn) {
-    if (typeof obj.removeEventListener != 'undefined') {
+    if (obj.removeEventListener) {
         obj.removeEventListener(type, fn, false);
     } else {
         if (obj.events) {
             for (var i in obj.events[type]) {
-                if (obj.events[type][i] == fn) {
+                if (obj.events[type][i] === fn) {
                     delete obj.events[type][i];
                 }
             }

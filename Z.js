@@ -1,7 +1,6 @@
 ﻿var $ = function(args) {
     return new ZXC(args);
 };
-//---------------------------------------------------------------------------------
 //基础库ZXC构造函数
 function ZXC(args) {
     //创建一个数组，来保存获取的节点和节点数组
@@ -82,18 +81,15 @@ function ZXC(args) {
         this.ready(args);
     }
 };
-//---------------------------------------------------------------------------------
 //ready接口，页面加载完成时调用fn函数
 ZXC.prototype.ready = function(fn) {
     domReady(fn);
 };
-//---------------------------------------------------------------------------------
-//获取ID节点*
+//获取ID节点
 ZXC.prototype.getId = function(id) {
     return document.getElementById(id);
 };
-//---------------------------------------------------------------------------------
-//获取元素节点数组*
+//获取元素节点数组
 ZXC.prototype.getTagName = function(tag, parentNode) {
     var node = parentNode || document;
     var temps = [];
@@ -104,10 +100,6 @@ ZXC.prototype.getTagName = function(tag, parentNode) {
     return temps;
 };
 
-
-
-
-//---------------------------------------------------------------------------------
 //获取CLASS节点数组
 ZXC.prototype.getClass = function(className, parentNode) {
         var node = null;
