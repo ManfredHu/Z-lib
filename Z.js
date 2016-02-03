@@ -102,23 +102,23 @@ ZXC.prototype.getTagName = function(tag, parentNode) {
 
 //获取CLASS节点数组
 ZXC.prototype.getClass = function(className, parentNode) {
-        var node = null;
-        var temps = [];
-        if (parentNode !== undefined) {
-            node = parentNode;
-        } else {
-            node = document;
-        }
-        var all = node.getElementsByTagName('*');
-        for (var i = 0, len = all.length; i < len; i++) {
-            if ((new RegExp('(\\s|^)' + className + '(\\s|$)')).test(all[i].className)) {
-                temps.push(all[i]);
-            }
-        }
-        return temps;
+    var node = null;
+    var temps = [];
+    if (parentNode !== undefined) {
+        node = parentNode;
+    } else {
+        node = document;
     }
-    //---------------------------------------------------------------------------------
-    //设置CSS选择器子节点
+    var all = node.getElementsByTagName('*');
+    for (var i = 0, len = all.length; i < len; i++) {
+        if ((new RegExp('(\\s|^)' + className + '(\\s|$)')).test(all[i].className)) {
+            temps.push(all[i]);
+        }
+    }
+    return temps;
+};
+//---------------------------------------------------------------------------------
+//设置CSS选择器子节点
 ZXC.prototype.find = function(str) {
         var childElements = [];
         for (var i = 0, len = this.elements.length; i < len; i++) {

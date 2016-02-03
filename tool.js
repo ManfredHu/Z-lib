@@ -140,56 +140,93 @@ function removeEvent(obj, type, fn) {
         }
     }
 }
-//---------------------------------------------------------------------------------
-//跨浏览器获取视口大小
+
+/**
+ * 跨浏览器获取视口大小
+ * @return {[Object]} [返回一个包含宽度和高度的对象]
+ */
 function getInner() {
-    if (typeof window.innerWidth != 'undefined') {
-        return {
-            width: window.innerWidth,
-            height: window.innerHeight
-        }
-    } else {
-        return {
-            width: document.documentElement.clientWidth,
-            height: document.documentElement.clientHeight
-        }
+	var width = window.innerWidth,
+		height = window.innerHeight;
+
+    if (typeof width !== 'number') { //IE
+    	if(document.compatMode === 'CSS1Compat'){
+    		return {
+    		    width: document.documentElement.clientWidth,
+    		    height: document.documentElement.clientHeight
+    		}	
+    	}
+    	return {
+    	    width: document.body.clientWidth,
+    	    height: document.body.clientHeight
+    	}
+    } else { //W3C标准
+    	return {
+    	    width: window.innerWidth,
+    	    height: window.innerHeight
+    	}
     }
 }
-//---------------------------------------------------------------------------------
-//跨浏览器获取页面滚动距离
+
+/**
+ * 跨浏览器获取页面滚动距离
+ * @return {[Object]} [包含top和left的对象]
+ */
 function getScroll() {
     return {
         top: document.documentElement.scrollTop || document.body.scrollTop,
         left: document.documentElement.scrollLeft || document.body.scrollLeft
     }
 }
-//---------------------------------------------------------------------------------
-//跨浏览器获取计算后的Style
+
+/**
+ * 跨浏览器获取计算后的Style
+ * @param  {[DOMNode]} element [元素]
+ * @param  {[String]}  attr    [样式属性]
+ * @return {[type]}            [返回对应样式属性的值]
+ */
 function getStyle(element, attr) {
     var value;
-    if (typeof window.getComputedStyle != 'undefined') { //W3C
+    if (window.getComputedStyle) { //W3C
         value = window.getComputedStyle(element, null)[attr];
-    } else if (typeof element.currentStyle != 'undeinfed') { //IE
+    } else if (element.currentStyle) { //IE
         value = element.currentStyle[attr];
     }
     return value;
 }
-//---------------------------------------------------------------------------------
-//判断class是否存在
+
+/**
+ * 判断class是否存在
+ * @param  {[DOMNode]} element   [元素]
+ * @param  {[String]}  className [类的名称]
+ * @return {Boolean}             [返回true或false]
+ */
 function hasClass(element, className) {
     return element.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
 }
-//---------------------------------------------------------------------------------
-//跨浏览器添加link规则
+
+/**
+ * 跨浏览器添加link规则
+ * 动态添加样式（用的比较少）
+ * @param  {[type]} sheet        [样式表]
+ * @param  {[type]} selectorText [选择器]
+ * @param  {[type]} cssText      [要插入的CSS主体]
+ * @param  {[type]} position     [位置]
+ */
 function insertRule(sheet, selectorText, cssText, position) {
-    if (typeof sheet.insertRule != 'undefined') { //W3C
+    if (sheet.insertRule) { //W3C
         sheet.insertRule(selectorText + '{' + cssText + '}', position);
-    } else if (typeof sheet.addRule != 'undefined') { //IE
+    } else if (sheet.addRule) { //IE
         sheet.addRule(selectorText, cssText, position);
     }
 }
-//---------------------------------------------------------------------------------
-//跨浏览器移出link规则
+
+/**
+ * 跨浏览器移出link规则
+ * 动态删除样式（用的比较少）
+ * @param  {[type]} sheet [样式表]
+ * @param  {[type]} index [序号]
+ */
 function deleteRule(sheet, index) {
     if (typeof sheet.deleteRule != 'undefined') { //W3C
         sheet.deleteRule(index);
@@ -197,22 +234,34 @@ function deleteRule(sheet, index) {
         sheet.removeRule(index);
     }
 }
-//---------------------------------------------------------------------------------
-//跨浏览器获取innerText
+
+/**
+ * 跨浏览器获取innerText
+ * @param  {[DOMNode]} element [要获取文本内容的元素]
+ * @return {[String]}          [元素文本的内容]
+ */
 function getInnerText(element) {
-    return (typeof element.textContent == 'string') ? element.textContent : element.innerText;
+    return (typeof element.textContent === 'string') ? element.textContent : element.innerText;
 }
-//---------------------------------------------------------------------------------
-//跨浏览器设置innerText
-function setInnerText(elememt, text) {
-    if (typeof element.textContent == 'string') {
+
+/**
+ * 跨浏览器设置innerText
+ * @param {[DOMNode]} elememt [要设置文本内容的元素]
+ * @param {[String]}  text    [要设置的文本]
+ */
+function setInnerText(element, text) {
+    if (typeof element.textContent === 'string') {
         element.textContent = text;
     } else {
         element.innerText = text;
     }
 }
-//---------------------------------------------------------------------------------
-//获取某一个元素到最外层顶点的位置
+
+/**
+ * 获取某一个元素到最外层顶点的位置
+ * @param  {[type]} element [要获取位置的元素]
+ * @return {[number]}       [距离顶部的位置]
+ */
 function offsetTop(element) {
     var top = element.offsetTop;
     var parent = element.offsetParent;
@@ -222,21 +271,35 @@ function offsetTop(element) {
     }
     return top;
 }
-//---------------------------------------------------------------------------------
-//删除前后空格,将小括号里面捕获到的空格全部删除
+
+/**
+ * 删除前后空格,将小括号里面捕获到的空格全部删除
+ * @param  {[String]} str [要删除前后空格的字符串]
+ * @return {[String]}     [处理后的字符串]
+ */
 function trim(str) {
     return str.replace(/(^\s*)|(\s*$)/g, '');
 }
-//---------------------------------------------------------------------------------
-//某一个值是否存在某一个数组中
+
+/**
+ * 某一个值是否存在某一个数组中
+ * @param  {[Array]} array [数组项]
+ * @param  {[type]}  value [要判断的项]
+ * @return {[boolean]}     [true或false]
+ */
 function inArray(array, value) {
     for (var i in array) {
         if (array[i] === value) return true;
     }
     return false;
 }
-//---------------------------------------------------------------------------------
-//获取某一个节点的上一个节点的索引
+
+/**
+ * 获取某一个节点的上一个节点的索引
+ * @param  {[type]} current [description]
+ * @param  {[type]} parent  [description]
+ * @return {[type]}         [description]
+ */
 function prevIndex(current, parent) {
     var length = parent.children.length;
     if (current == 0) return length - 1;
