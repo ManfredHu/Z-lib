@@ -4,6 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Z-Test</title>
+    <style type="text/css">
+    #login {
+        width:500px;
+        position: absolute;
+        z-index: 9999;
+        background: #999;
+    }
+    #screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #000;
+        z-index: 9998;
+        filter: alpha(opacity=30);
+        opacity: 0.3;
+    }
+    </style>
 </head>
 
 <body>
@@ -40,11 +57,17 @@
         <p class="blue">That is footer</p>
         <p class="blue">That is footer</p>
     </div>
-    
+    <div id="login">
+        <h2>登陆</h2>
+        <div class="user">帐 号：<input type="text" name="user" class="text"></div>
+        <div class="pass">密 码：<input type="password" name="pass" class="text"></div>
+        <div class="button"><input type="button" class="submit" value="登陆"></div>
+    </div>
+    <div id="screen">
+    </div>
     <script type="text/javascript" src="../Z.js"></script>
     <script type="text/javascript" src="../tool.js"></script>
-    <!--
-    <script type="text/javascript" src="../EventUtil.js"></script>-->
+    <script type="text/javascript" src="../Z_drag.js"></script>
     <script type="text/javascript" src="test.js"></script>
 </body>
 

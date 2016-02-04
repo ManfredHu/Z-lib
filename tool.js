@@ -305,26 +305,38 @@ function prevIndex(current, parent) {
     if (current == 0) return length - 1;
     return parseInt(current) - 1;
 }
-//---------------------------------------------------------------------------------
-//获取某一个节点的下一个节点的索引
+
+/**
+ * 获取某一个节点的下一个节点的索引
+ * @param  {[type]} current [description]
+ * @param  {[type]} parent  [description]
+ * @return {[type]}         [description]
+ */
 function nextIndex(current, parent) {
     var length = parent.children.length;
     if (current == length - 1) return 0;
     return parseInt(current) + 1;
 }
-//---------------------------------------------------------------------------------
-//滚动条固定
+
+/**
+ * 滚动条固定(页面固定滚动到某个位置)
+ */
 function fixedScroll() {
     //让页面立即返回原来的位置
     window.scrollTo(fixedScroll.left, fixedScroll.top);
 }
-//---------------------------------------------------------------------------------
-//阻止默认行为
+
+/**
+ * 阻止默认行为
+ * @param  {Event} e [事件event参数]
+ */
 function predef(e) {
     e.preventDefault();
 }
-//---------------------------------------------------------------------------------
-//创建cookie
+
+/**
+ * 创建cookie
+ */
 function setCookie(name, value, expires, path, domain, secure) {
     var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
     if (expires instanceof Date) {
@@ -341,8 +353,10 @@ function setCookie(name, value, expires, path, domain, secure) {
     }
     document.cookie = cookieText;
 }
-//---------------------------------------------------------------------------------
-//获取cookie
+
+/**
+ * 获取cookie
+ */
 function getCookie(name) {
     var cookieName = encodeURIComponent(name) + '=';
     var cookieStart = document.cookie.indexOf(cookieName);
@@ -356,8 +370,11 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-//---------------------------------------------------------------------------------
-//删除cookie
+
+/**
+ * 删除cookie
+ * @param  {[String]} name [cookie的键]
+ */
 function unsetCookie(name) {
     document.cookie = name + "= ; expires=" + new Date(0);
 }

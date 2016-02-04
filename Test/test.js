@@ -54,5 +54,20 @@
 // console.log(a); //That is header 1
 // setInnerText(dd[0],'这是标题1');
 
-var a = document.getElementById('footer') 
-console.log(offsetTop(a));
+// var a = document.getElementById('footer') 
+// console.log(offsetTop(a));
+
+// $('.red').toggle(function(){
+//     $(this).css('color','green');
+// },function(){
+//     $(this).css('color','red');
+// });
+
+// $('.red').click(function() {
+//     alert('123');
+// })
+var width = $('#login').css('width')
+var height = $('#login').css('height')
+$('#login').drag();
+$('#login').center(parseFloat(width),parseFloat(height));
+$('#screen').lock();

@@ -1,7 +1,10 @@
 ﻿var $ = function(args) {
     return new ZXC(args);
 };
-//基础库ZXC构造函数
+/**
+ * 基础库ZXC构造函数
+ * @param {[String]} args [参数，可以为String/Function/DOMNode]
+ */
 function ZXC(args) {
     //创建一个数组，来保存获取的节点和节点数组
     this.elements = [];
@@ -81,15 +84,30 @@ function ZXC(args) {
         this.ready(args);
     }
 };
-//ready接口，页面加载完成时调用fn函数
+
+/**
+ * ready接口，页面加载完成时调用fn函数
+ * @param  {Function} fn [回调函数]
+ */
 ZXC.prototype.ready = function(fn) {
     domReady(fn);
 };
-//获取ID节点
+
+/**
+ * 获取ID节点
+ * @param  {[String]} id [ID]
+ * @return {[Array]}     [封装的数组]
+ */
 ZXC.prototype.getId = function(id) {
     return document.getElementById(id);
 };
-//获取元素节点数组
+
+/**
+ * 获取元素节点数组
+ * @param  {[String]}  tag        [标签名]
+ * @param  {[DOMNode]} parentNode [父节点]
+ * @return {[Array]}              [封装的数组]
+ */
 ZXC.prototype.getTagName = function(tag, parentNode) {
     var node = parentNode || document;
     var temps = [];
@@ -100,70 +118,104 @@ ZXC.prototype.getTagName = function(tag, parentNode) {
     return temps;
 };
 
-//获取CLASS节点数组
+/**
+ * 获取CLASS节点数组
+ * @param  {String} className   [类名]
+ * @param  {DOMNode} parentNode [父节点]
+ * @return {Array}              [节点数组]
+ */
 ZXC.prototype.getClass = function(className, parentNode) {
-    var node = null;
-    var temps = [];
-    if (parentNode !== undefined) {
-        node = parentNode;
+    var node = null,
+        temps = [];
+
+    //没有缩小范围且支持document.querySelectorAll方法
+    //将NodeList数组转化为数组
+    if (typeof parentNode === "undefined" && document.querySelectorAll) {
+        temps = Array.prototype.slice.call(document.querySelectorAll('.' + className));
     } else {
-        node = document;
-    }
-    var all = node.getElementsByTagName('*');
-    for (var i = 0, len = all.length; i < len; i++) {
-        if ((new RegExp('(\\s|^)' + className + '(\\s|$)')).test(all[i].className)) {
-            temps.push(all[i]);
+        if (parentNode !== undefined) {
+            node = parentNode;
+        } else {
+            node = document;
+        }
+        var all = node.getElementsByTagName('*');
+        for (var i = 0, len = all.length; i < len; i++) {
+            if ((new RegExp('(\\s|^)' + className + '(\\s|$)')).test(all[i].className)) {
+                temps.push(all[i]);
+            }
         }
     }
     return temps;
 };
-//---------------------------------------------------------------------------------
-//设置CSS选择器子节点
+
+/**
+ * 设置CSS选择器子节点
+ * @param  {[String]} str [选择器]
+ * @return {[ZXC]}        [ZXC对象]
+ */
 ZXC.prototype.find = function(str) {
-        var childElements = [];
-        for (var i = 0, len = this.elements.length; i < len; i++) {
-            switch (str.charAt(0)) {
-                case '#':
-                    childElements.push(this.getId(str.substring(1)));
-                    break;
-                case '.':
-                    var temps = this.getClass(str.substring(1), this.elements[i]);
-                    for (var j = 0; j < temps.length; j++) {
-                        childElements.push(temps[j]);
-                    }
-                    break;
-                default:
-                    var temps = this.getTagName(str, this.elements[i]);
-                    for (var j = 0; j < temps.length; j++) {
-                        childElements.push(temps[j]);
-                    }
-            }
+    var childElements = [];
+    for (var i = 0, len = this.elements.length; i < len; i++) {
+        switch (str.charAt(0)) {
+            case '#':
+                childElements.push(this.getId(str.substring(1)));
+                break;
+            case '.':
+                var temps = this.getClass(str.substring(1), this.elements[i]);
+                for (var j = 0; j < temps.length; j++) {
+                    childElements.push(temps[j]);
+                }
+                break;
+            default:
+                var temps = this.getTagName(str, this.elements[i]);
+                for (var j = 0; j < temps.length; j++) {
+                    childElements.push(temps[j]);
+                }
         }
-        this.elements = childElements;
-        return this;
     }
-    //---------------------------------------------------------------------------------
-    //获取某一个节点，并返回这个节点对象(注意只有一个元素)
+    this.elements = childElements;
+    return this;
+};
+
+/**
+ * 获取某一个节点，并返回这个节点对象(注意只有一个元素)
+ * @param  {Number} num  [获取数组的第几个元素]
+ * @return {DomNode}     [返回数组的第几个元素节点]
+ */
 ZXC.prototype.ge = function(num) {
     return this.elements[num];
 };
-//---------------------------------------------------------------------------------
-//获取首个节点，并返回这个节点对象(注意只有一个元素)
+
+/**
+ * 获取首个节点，并返回这个节点对象(注意只有一个元素)
+ * @return {DomNode} [返回数组的第1个元素节点]
+ */
 ZXC.prototype.first = function() {
     return this.elements[0];
 };
-//---------------------------------------------------------------------------------
-//获取末个节点，并返回这个节点对象(注意只有一个元素)
+
+/**
+ * 获取末个节点，并返回这个节点对象(注意只有一个元素)
+ * @return {DomNode} [返回数组的最后1个元素节点]
+ */
 ZXC.prototype.last = function() {
     return this.elements[this.elements.length - 1];
 };
-//---------------------------------------------------------------------------------
-//获取某组节点的数量
+
+/**
+ * 获取某组节点的数量
+ * @return {Number} [返回ZXC对象的element数组的长度]
+ */
 ZXC.prototype.length = function() {
     return this.elements.length;
 };
-//---------------------------------------------------------------------------------
-//获取某一个节点的属性
+
+/**
+ * 获取某一个节点的属性
+ * @param  {[String]} attr  [属性]
+ * @param  {[String]} value [值]
+ * @return {[ZXC]}          [返回ZXC对象]
+ */
 ZXC.prototype.attr = function(attr, value) {
     for (var i = 0; i < this.elements.length; i++) {
         if (arguments.length == 1) {
@@ -174,16 +226,23 @@ ZXC.prototype.attr = function(attr, value) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//获取某一个节点在整个节点组中是第几个索引
+
+/**
+ * 获取某一个节点在整个节点组中是第几个索引
+ * @return {[Number]} [返回对象在父元素中的索引]
+ */
 ZXC.prototype.index = function() {
     var children = this.elements[0].parentNode.children;
-    for (var i = 0; i < children.length; i++) {
+    for (var i = 0, len = children.length; i < len; i++) {
         if (this.elements[0] == children[i]) return i;
     }
 };
-//---------------------------------------------------------------------------------
-//设置某一个节点的透明度
+
+/**
+ * 跨浏览器设置某一个节点的透明度
+ * @param  {[Number]} num [透明度数值，值为0-100而不是0-1]
+ * @return {[ZXC]}        [返回ZXC对象]
+ */
 ZXC.prototype.opacity = function(num) {
     for (var i = 0; i < this.elements.length; i++) {
         this.elements[i].style.opacity = num / 100;
@@ -191,16 +250,23 @@ ZXC.prototype.opacity = function(num) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//获取某一个节点，并且ZXC对象
+
+/**
+ * 获取某一个节点，并且ZXC对象
+ * @param  {Number} num [序号]
+ * @return {ZXC}        [ZXC对象]
+ */
 ZXC.prototype.eq = function(num) {
     var element = this.elements[num];
     this.elements = [];
     this.elements[0] = element;
     return this;
 };
-//---------------------------------------------------------------------------------
-//获取当前节点的下一个元素节点
+
+/**
+ * 获取当前节点的下一个元素节点
+ * @return {DOMNode} [下一个兄弟节点]
+ */
 ZXC.prototype.next = function() {
     for (var i = 0; i < this.elements.length; i++) {
         this.elements[i] = this.elements[i].nextSibling;
@@ -209,8 +275,11 @@ ZXC.prototype.next = function() {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//获取当前节点的上一个元素节点
+
+/**
+ * 获取当前节点的上一个元素节点
+ * @return {DOMNode} [前一个兄弟节点]
+ */
 ZXC.prototype.prev = function() {
     for (var i = 0; i < this.elements.length; i++) {
         this.elements[i] = this.elements[i].previousSibling;
@@ -219,18 +288,30 @@ ZXC.prototype.prev = function() {
     }
     return this;
 };
-//设置CSS
+
+/**
+ * 设置CSS
+ * @param  {[String]} attr  [属性]
+ * @param  {[String]} value [值（可选，没有则为获取属性值）]
+ * @return {[ZXC]}          [ZXC对象]
+ */
 ZXC.prototype.css = function(attr, value) {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
+        //获取属性
         if (arguments.length == 1) {
             return getStyle(this.elements[i], attr);
         }
+        //设置属性
         this.elements[i].style[attr] = value;
     }
     return this;
 };
 
-//添加Class
+/**
+ * 添加Class
+ * @param {[String]} className [类名]
+ * @return {[ZXC]}             [ZXC对象]
+ */
 ZXC.prototype.addClass = function(className) {
     for (var i = 0; i < this.elements.length; i++) {
         if (!hasClass(this.elements[i], className)) {
@@ -239,7 +320,12 @@ ZXC.prototype.addClass = function(className) {
     }
     return this;
 };
-//移除Class
+
+/**
+ * 移除Class
+ * @param  {[String]} className [类名]
+ * @return {[ZXC]}              [ZXC对象]
+ */
 ZXC.prototype.removeClass = function(className) {
     for (var i = 0; i < this.elements.length; i++) {
         if (hasClass(this.elements[i], className)) {
@@ -248,30 +334,49 @@ ZXC.prototype.removeClass = function(className) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//添加link或style的CSS规则
+
+/**
+ * 动态添加link或style的CSS规则
+ * @param {[type]} num          [description]
+ * @param {[type]} selectorText [description]
+ * @param {[type]} cssText      [description]
+ * @param {[type]} position     [description]
+ */
 ZXC.prototype.addRule = function(num, selectorText, cssText, position) {
     var sheet = document.styleSheets[num];
     insertRule(sheet, selectorText, cssText, position);
     return this;
 };
-//---------------------------------------------------------------------------------
-//移除link或style的CSS规则
+
+/**
+ * 动态移除link或style的CSS规则
+ * @param  {[type]} num   [description]
+ * @param  {[type]} index [description]
+ * @return {[type]}       [description]
+ */
 ZXC.prototype.removeRule = function(num, index) {
     var sheet = document.styleSheets[num];
     deleteRule(sheet, index);
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置表单字段元素
+
+/**
+ * 设置表单字段元素
+ * @param  {[String]} name [表单元素的name]
+ * @return {[ZXC]}         [ZXC对象]
+ */
 ZXC.prototype.form = function(name) {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         this.elements[i] = this.elements[i][name];
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置表单字段内容获取
+
+/**
+ * 设置表单字段内容获取
+ * @param  {[String]} str [获取元素的值]
+ * @return {[ZXC]}        [ZXC对象]
+ */
 ZXC.prototype.value = function(str) {
     for (var i = 0; i < this.elements.length; i++) {
         if (arguments.length == 0) {
@@ -281,8 +386,12 @@ ZXC.prototype.value = function(str) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置innerHTML
+
+/**
+ * 设置innerHTML
+ * @param  {[String]} str [设置元素的innerHTML]
+ * @return {[ZXC]}        [ZXC对象]
+ */
 ZXC.prototype.html = function(str) {
     for (var i = 0; i < this.elements.length; i++) {
         if (arguments.length == 0) {
@@ -292,8 +401,12 @@ ZXC.prototype.html = function(str) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置innerText
+
+/**
+ * 设置innerText
+ * @param  {[String]} str [设置文本内容]
+ * @return {[ZXC]}        [ZXC对象]
+ */
 ZXC.prototype.text = function(str) {
     for (var i = 0; i < this.elements.length; i++) {
         if (arguments.length == 0) {
@@ -303,16 +416,26 @@ ZXC.prototype.text = function(str) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置事件发生器
+
+/**
+ * 设置事件发生器
+ * @param  {[String]}   event [事件名称]
+ * @param  {Function}   fn    [回调函数]
+ * @return {[ZXC]}            [ZXC对象]
+ */
 ZXC.prototype.bind = function(event, fn) {
     for (var i = 0; i < this.elements.length; i++) {
         addEvent(this.elements[i], event, fn);
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置鼠标移入移出方法
+
+/**
+ * 设置鼠标移入移出方法
+ * @param  {[Function]} over [进入的回调函数]
+ * @param  {[Function]} out  [移出的回调函数]
+ * @return {[ZXC]}           [ZXC对象]
+ */
 ZXC.prototype.hover = function(over, out) {
     for (var i = 0; i < this.elements.length; i++) {
         addEvent(this.elements[i], 'mouseover', over);
@@ -320,9 +443,14 @@ ZXC.prototype.hover = function(over, out) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置点击切换方法
-ZXC.prototype.toggle = function() {
+
+
+/**
+ * 设置点击切换方法
+ * @param  {[Function]} func [回调函数]
+ * @return {[ZXC]}           [ZXC对象]
+ */
+ZXC.prototype.toggle = function(func) {
     //用arguments函数数组对this.element数组元素进行多重绑定
     for (var i = 0; i < this.elements.length; i++) {
         //立即绑定事件
@@ -336,49 +464,66 @@ ZXC.prototype.toggle = function() {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置显示
+
+/**
+ * 设置显示
+ * @return {[ZXC]} [ZXC对象]
+ */
 ZXC.prototype.show = function() {
     for (var i = 0; i < this.elements.length; i++) {
         this.elements[i].style.display = 'block';
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置隐藏
+
+/**
+ * 设置隐藏
+ * @return {[ZXC]} [ZXC对象]
+ */
 ZXC.prototype.hide = function() {
     for (var i = 0; i < this.elements.length; i++) {
         this.elements[i].style.display = 'none';
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//设置物体居中
+
+/**
+ * 设置物体居中,需要先设置position
+ * @param  {[Number]} width  [宽度]
+ * @param  {[Number]} height [高度]
+ * @return {[ZXC]}           [ZXC对象]
+ */
 ZXC.prototype.center = function(width, height) {
     //bug修复，物体居中位置需要加上滚动的距离
     var top = (getInner().height - height) / 2 + getScroll().top;
     var left = (getInner().width - width) / 2 + getScroll().left;
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         this.elements[i].style.top = top + 'px';
         this.elements[i].style.left = left + 'px';
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//锁屏功能
+
+/**
+ * 锁屏功能
+ * @return {[ZXC]} [ZXC对象]
+ */
 ZXC.prototype.lock = function() {
-    for (var i = 0; i < this.elements.length; i++) {
-        //bug修复，当拖动文字拉下去时候让页面重新回到原来位置
+    for (var i = 0, len = this.elements.length; i < len; i++) {
+        //当拖动文字拉下去时候让页面重新回到原来位置
         //这里用fixedScroll函数的top和left属性记录当前滚动高度的值，如果页面滚动则让页面返回原来位置
-        fixedScroll.top = getScroll().top;
-        fixedScroll.left = getScroll().left;
+        var scrollLeft = getScroll().left,
+            scrollTop = getScroll().top;
+        fixedScroll.top = scrollTop;
+        fixedScroll.left = scrollLeft;
         //bug修复，锁屏的画布长度和高度为视口长度和宽度加上滚动的长度
         this.elements[i].style.width = getInner().width + getScroll().left + 'px';
         this.elements[i].style.height = getInner().height + getScroll().top + 'px';
         this.elements[i].style.display = 'block';
-        //新旧firefox对滚动条overflow:hidden的支持不一样
-        parseFloat(sys.firefox) < 4 ? document.body.style.overflow = 'hidden' :
-            document.documentElement.style.overflow = 'hidden';
+
+        //隐藏滚动条
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
         //阻止事件的默认行为(包括拖拽文本，滚动条等)
         addEvent(this.elements[i], 'mousedown', predef);
         addEvent(this.elements[i], 'mouseup', predef);
@@ -389,14 +534,17 @@ ZXC.prototype.lock = function() {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//解锁屏功能
+
+/**
+ * 解锁屏功能
+ * @return {[ZXC]} [ZXC对象]
+ */
 ZXC.prototype.unlock = function() {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         this.elements[i].style.display = 'none';
-        //新旧firefox对滚动条overflow:hidden的支持不一样
-        parseFloat(sys.firefox) < 4 ? document.body.style.overflow = 'auto' :
-            document.documentElement.style.overflow = 'auto';
+        //显示滚动条
+        document.body.style.overflow = 'auto';
+        document.documentElement.style.overflow = 'auto';
         //阻止事件的默认行为(包括拖拽文本，滚动条等)
         removeEvent(this.elements[i], 'mousedown', predef);
         removeEvent(this.elements[i], 'mouseup', predef);
@@ -407,22 +555,31 @@ ZXC.prototype.unlock = function() {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//触发点击事件
+
+/**
+ * 触发点击事件
+ * @param  {Function} fn [回调函数]
+ * @return {[ZXC]}       [ZXC对象]
+ */
 ZXC.prototype.click = function(fn) {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         this.elements[i].onclick = fn;
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//触发浏览器窗口事件
+
+/**
+ * 触发浏览器窗口事件
+ * @param  {Function} fn [回调函数]
+ * @return {[ZXC]}       [ZXC对象]
+ */
 ZXC.prototype.resize = function(fn) {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         var element = this.elements[i];
         addEvent(window, 'resize', function() {
             fn();
             //IE的滚动条出现和消失会触发resize事件
+            //防止元素在页面拉伸的时候超出屏幕范围
             if (element.offsetLeft > getInner().width + getScroll().left - element.offsetWidth) {
                 element.style.left = getInner().width + getScroll().left - element.offsetWidth + 'px';
                 if (element.offsetLeft <= 0 + getScroll().left) {
@@ -439,7 +596,7 @@ ZXC.prototype.resize = function(fn) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
+
 /*
  * 设置动画
  * 支持上下左右位移，高度宽度变换，透明度渐变
@@ -456,7 +613,7 @@ ZXC.prototype.resize = function(fn) {
  		 }
  */
 ZXC.prototype.animate = function(obj) {
-    for (var i = 0; i < this.elements.length; i++) {
+    for (var i = 0, len = this.elements.length; i < len; i++) {
         //---------------------------------------------------------------------------------------
         //获取参数
         var element = this.elements[i],
@@ -592,8 +749,12 @@ ZXC.prototype.animate = function(obj) {
     }
     return this;
 };
-//---------------------------------------------------------------------------------
-//插件接口
+
+/**
+ * 插件接口
+ * @param  {[String]}   name [在原型上扩展属性]
+ * @param  {Function}   fn   [绑定的函数]
+ */
 ZXC.prototype.extend = function(name, fn) {
     ZXC.prototype[name] = fn;
 };
