@@ -10,7 +10,7 @@
 封装了ready,getId,getTagName,getClass,find等等方法，实现了连缀
 
 ## Z_drag.js
-一个拖动控件插件，可以对页面的元素进行拖动
+一个拖动控件插件，可以对页面的元素进行拖动（没有用到HTML5的拖动，后面加入）
 
 ## Z_serialize.js
 兼容老式浏览器的表单格式化
