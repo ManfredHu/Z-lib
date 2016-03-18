@@ -1,0 +1,31 @@
+{
+  "name": "z-lib",
+  "version": "1.0.0",
+  "description": "这个是自己模仿jQuery封装实现的自己的代码库，有做的不好的地方欢迎issue联系^_^\r 受限于自己现在的水平，代码可能结构没有那么优美，如for迭代ZXC对象下的数组没有抽离出来做成公共部分等等，后面继续加强",
+  "main": "Z.js",
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "del": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.3",
+    "uglify": "^0.1.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManfredHu/Z-lib.git"
+  },
+  "author": "ManfredHu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ManfredHu/Z-lib/issues"
+  },
+  "homepage": "https://github.com/ManfredHu/Z-lib#readme"
+}
