@@ -6,7 +6,7 @@
     };
 
     /**
-     * 基础库ZXC构造函数
+     * ZXC构造函数
      * @param {[String]} args [参数，可以为String/Function/DOMNode]
      */
     function ZXC(args) {
@@ -85,7 +85,7 @@
 
             //当传入的是函数的时候
         } else if (typeof args === 'function') {
-            this.ready(args);
+            this.ready(args); //传入ready保存，等待DOM加载完成
         }
     };
 
